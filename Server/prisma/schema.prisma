@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Province {
+  id          String     @id @default(uuid())
+  designation String
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  districts   District[]
+
+  @@map("provinces")
+}
+
+model District {
+  id          String       @id @default(uuid())
+  designation String
+  provinceId  String       @map("province_id")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  province    Province     @relation(fields: [provinceId], references: [id])
+  subscribers Subscriber[]
+
+  @@map("districts")
+}
+
+model Subscriber {
+  id         String   @id @default(uuid())
+  phone      String   @unique @db.VarChar(9)
+  deviceId   String   @map("device_id")
+  verified   Boolean
+  districtId String   @map("district_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  district   District @relation(fields: [districtId], references: [id])
+
+  @@map("subscribers")
+}
