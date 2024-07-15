@@ -1,1 +1,3 @@
-Be Prepared
+**BePrepared - Disaster Alert App **
+
+BePrepared is a comprehensive disaster alert application designed specifically for Mozambique. The app aims to provide timely and accurate notifications about various natural disasters such as cyclones, floods, and earthquakes. It offers real-time updates, safety tips, and emergency contact information to help users stay informed and take appropriate actions during emergencies. The user-friendly interface ensures easy navigation and quick access to critical information, making BePrepared an essential tool for enhancing community resilience and disaster preparedness in Mozambique.
