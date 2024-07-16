@@ -38,9 +38,10 @@ model District {
 model Subscriber {
   id         String   @id @default(uuid())
   phone      String   @unique @db.VarChar(9)
-  deviceId   String   @map("device_id")
-  verified   Boolean
+  deviceId   String?  @map("device_id")
+  verified   Boolean  @default(false)
   districtId String   @map("district_id")
+  provinceId String   @map("province_id")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
   district   District @relation(fields: [districtId], references: [id])
