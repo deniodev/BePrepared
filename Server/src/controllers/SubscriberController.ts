@@ -1,10 +1,18 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { generateSixDigitsNumber } from "../utils/utils";
 import { db } from "../database";
+import { z } from "zod";
 
 export class SubscriberController {
   async create(request: FastifyRequest, reply: FastifyReply) {
-    const { phone, provinceId, districtId } = request.body;
+    const subscriberSchema = z.object({
+      phone: z.string().regex(/^8[2-7]\d{7}/),
+      provinceId: z.string(),
+      districtId: z.string(),
+    });
+    const { phone, provinceId, districtId } = subscriberSchema.parse(
+      request.body
+    );
 
     const subscriberExists = await db.subscriber.findUnique({
       where: { phone: String(phone) },
