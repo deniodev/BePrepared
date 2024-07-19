@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { SubscriberController } from "../controllers/SubscriberController";
-import { AuthController } from "../controllers/authController";
+import { AuthController } from "../controllers/AuthController";
 
 const subscriberController = new SubscriberController();
 const authController = new AuthController();

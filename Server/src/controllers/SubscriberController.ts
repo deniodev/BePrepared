@@ -48,4 +48,47 @@ export class SubscriberController {
 
     return reply.status(201).send(savedSubscriber);
   }
+
+  async update(request: FastifyRequest, reply: FastifyReply) {
+    const deviceId = z.string().parse(request.headers.authorization);
+    const subscriberSchema = z.object({
+      provinceId: z.string().optional(),
+      districtId: z.string().optional(),
+    });
+    const { provinceId, districtId } = subscriberSchema.parse(request.body);
+
+    const subscriber = await db.subscriber.findUnique({
+      where: {
+        deviceId,
+        verified: true,
+      },
+    });
+
+    if (!subscriber)
+      return reply.status(401).send({ error: "Erro de Autenticacao!" });
+
+    const district = await db.district.findUnique({
+      where: {
+        id: districtId,
+        provinceId,
+      },
+    });
+    if (!district) {
+      return reply
+        .status(400)
+        .send({ error: "Distrito nao pertence a provincia" });
+    }
+
+    const updatedSubscriber = await db.subscriber.update({
+      where: {
+        deviceId,
+      },
+      data: {
+        provinceId,
+        districtId,
+      },
+    });
+
+    return reply.send(updatedSubscriber);
+  }
 }

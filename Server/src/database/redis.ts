@@ -1,33 +1,51 @@
 import { createClient, RedisClientType } from "redis";
 
 class Redis {
-  #client: RedisClientType;
+  #client?: RedisClientType;
+
   constructor() {
-    createClient()
-      .on("error", (err) => {
-        console.log("Redis Client Error", err);
-        throw new Error(err);
-      })
-      .connect()
-      .then((client) => {
-        this.#client = client;
-        console.log("Successfully connected to redis!");
-      });
+    this.#initializeClient();
+  }
+
+  async #initializeClient() {
+    this.#client = createClient();
+
+    this.#client.on("error", (err) => {
+      console.error("Redis Client Error", err);
+      throw new Error("Redis connection failed");
+    });
+
+    try {
+      await this.#client.connect();
+      console.log("Successfully connected to Redis!");
+    } catch (err) {
+      console.error("Redis connection error", err);
+      throw new Error("Redis connection failed");
+    }
   }
 
   async set(key: string, value: string | number, duration: number) {
-    await this.#client.set(key, value, {
+    if (!this.#client) {
+      await this.#initializeClient();
+    }
+    await this.#client!.set(key, value, {
       EX: duration,
     });
   }
 
   async get(key: string) {
-    const value = await this.#client.get(key);
-    return value;
+    if (!this.#client) {
+      await this.#initializeClient();
+    }
+    const value = await this.#client!.get(key);
+    return value !== null ? value : null;
   }
 
   async delete(key: string) {
-    await this.#client.del(key);
+    if (!this.#client) {
+      await this.#initializeClient();
+    }
+    await this.#client!.del(key);
   }
 }
 
