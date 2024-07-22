@@ -5,6 +5,7 @@ import { db } from "../database";
 import { generateSixDigitsNumber } from "../utils/utils";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { authConfig } from "../config/auth";
 
 export class AuthController {
   async authOtp(request: FastifyRequest, reply: FastifyReply) {
@@ -73,7 +74,9 @@ export class AuthController {
     if (!(await bcrypt.compare(password, admin.password)))
       return reply.status(401).send("Email ou Password Invalido");
 
-    const token = jwt.sign({ id: admin.id }, "app_secret", { expiresIn: "3d" });
+    const token = jwt.sign({ id: admin.id }, authConfig.secret, {
+      expiresIn: authConfig.expiresIn,
+    });
 
     return reply.send({
       token,
