@@ -14,7 +14,8 @@ model Province {
   createdAt   DateTime     @default(now()) @map("created_at")
   updatedAt   DateTime     @updatedAt @map("updated_at")
   districts   District[]
-  Subscriber  Subscriber[]
+  subscribers Subscriber[]
+  alerts      Alert[]
 
   @@map("provinces")
 }
@@ -28,6 +29,7 @@ model District {
   updatedAt   DateTime     @updatedAt @map("updated_at")
   province    Province     @relation(fields: [provinceId], references: [id])
   subscribers Subscriber[]
+  alerts      Alert[]
 
   @@map("districts")
 }
@@ -69,4 +71,18 @@ model admin {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("admins")
+}
+
+model Alert {
+  id         String   @id @default(uuid())
+  title      String
+  message    String
+  districtId String   @map("district_id")
+  provinceId String   @map("province_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  district   District @relation(fields: [districtId], references: [id])
+  province   Province @relation(fields: [provinceId], references: [id])
+
+  @@map("alerts")
 }
