@@ -1,4 +1,5 @@
 import { db } from "../src/database";
+import bcrypt from "bcrypt";
 
 interface Province {
   province: string;
@@ -201,8 +202,9 @@ const provinces: Province[] = [
 ];
 
 async function seed() {
-  return Promise.all(
-    provinces.map(async (province) => {
+  const passwordHash = await bcrypt.hash("123456", 10);
+  return Promise.all([
+    ...provinces.map(async (province) => {
       await db.province.create({
         data: {
           designation: province.province,
@@ -213,8 +215,15 @@ async function seed() {
           },
         },
       });
-    })
-  );
+    }),
+    await db.admin.create({
+      data: {
+        name: "Administrator",
+        email: "admin@beprepared.co.mz",
+        password: passwordHash,
+      },
+    }),
+  ]);
 }
 
 seed().then(() => {
