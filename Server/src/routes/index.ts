@@ -25,6 +25,9 @@ export async function routes(fastify: FastifyInstance) {
   fastify.post("/auth/subscribers", (request, reply) =>
     authController.loginSubscriber(request, reply)
   );
+  fastify.post("/auth/admin", (request, reply) =>
+    authController.loginAdmin(request, reply)
+  );
 
   fastify.post("/notifications", (request, reply) =>
     notificationController.create(request, reply)
