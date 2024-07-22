@@ -3,6 +3,8 @@ import { z } from "zod";
 import { redis } from "../database/redis";
 import { db } from "../database";
 import { generateSixDigitsNumber } from "../utils/utils";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export class AuthController {
   async authOtp(request: FastifyRequest, reply: FastifyReply) {
@@ -55,5 +57,30 @@ export class AuthController {
     console.log(otp);
     await redis.set(`otp_${otp}`, phone, 60 * 3);
     return reply.status(204).send();
+  }
+  async loginAdmin(request: FastifyRequest, reply: FastifyReply) {
+    const adminSchema = z.object({
+      email: z.string().email(),
+      password: z.string(),
+    });
+    const { email, password } = adminSchema.parse(request.body);
+    const admin = await db.admin.findFirst({
+      where: {
+        email,
+      },
+    });
+    if (!admin) return reply.status(401).send("Email ou Password Invalido!");
+    if (!(await bcrypt.compare(password, admin.password)))
+      return reply.status(401).send("Email ou Password Invalido");
+
+    const token = jwt.sign({ id: admin.id }, "app_secret", { expiresIn: "3d" });
+
+    return reply.send({
+      token,
+      admin: {
+        ...admin,
+        password: undefined,
+      },
+    });
   }
 }
