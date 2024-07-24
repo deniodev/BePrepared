@@ -11,10 +11,6 @@ const notificationController = new NotificationController();
 const alertController = new AlertController();
 
 export async function routes(fastify: FastifyInstance) {
-  fastify.get("/alerts", async function handler(request, reply) {
-    return { hello: "dasn" };
-  });
-
   fastify.post("/subscribers", (request, reply) =>
     subscriberController.create(request, reply)
   );
@@ -41,5 +37,8 @@ export async function routes(fastify: FastifyInstance) {
 
   fastify.post("/alerts", { preHandler: authHook }, (request, reply) =>
     alertController.create(request, reply)
+  );
+  fastify.get("/alerts", (request, reply) =>
+    alertController.list(request, reply)
   );
 }
