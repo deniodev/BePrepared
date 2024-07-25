@@ -24,6 +24,8 @@
     "@prisma/client": "^5.16.2",
     "bcrypt": "^5.1.1",
     "fastify": "^4.28.1",
+    "firebase": "^10.12.4",
+    "firebase-admin": "^12.2.0",
     "jsonwebtoken": "^9.0.2",
     "redis": "^4.6.15",
     "tsx": "^4.16.2",
